@@ -1,0 +1,172 @@
+# ------------------------------------------------------------------------------
+#+STARTUP: content showstars indent
+#+TITLE:  Conversion des fichiers tar de Pinnacle vers du DICOM
+#+AUTHOR: Pierre-Alain Tercier
+#+LANGUAGE: fr
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [11pt,a4paper]
+#+LATEX_HEADER: \usepackage[french]{babel}
+#+LATEX_HEADER: \usepackage{caption}
+#+LATEX_HEADER: \usepackage{geometry} \geometry{ a4paper, total={170mm,257mm}, left=20mm, right=20mm, top=5mm, bottom=15mm}
+#+LATEX_HEADER: \captionsetup[table]{skip=8pt}
+#+OPTIONS:   toc:nil html-scripts:nil html-postamble:nil html-style:nil ^:nil
+# ------------------------------------------------------------------------------
+
+* Introduction
+
+Pour l'instant le système Pinnacle est encore fonctionnel. Toutefois,
+il n'y a plus aucun contrat entre l'HFR et Philips pour maintenir
+Pinnacle en état de marche. Il faut donc qu'on trouve une solution
+pour tous les patients qui sont encore dans le système Pinnacle.
+
+Note: Tous ces patients sont régulièrement sauvegardés sous forme de
+fichier tar (Tape ARchive). C'est le format standard d'archivage sous
+tous les systèmes Unix (dont SunOs sur lequel tourne Pinnacle et
+également Linux qu'on connaît bien à l'HFR).
+
+L'idée est de convertir ces fichiers tar qui existent sous une forme
+d'un fichier tar pour un patient Pinnacle.
+
+La chance c'est que des physiciens Australiens ont travaillé pour
+concevoir un outil python qui fait justement ce travail de conversion.
+
+Ce document explique les démarches entreprises à l'HFR pour:
+- valider l'outil de conversion,
+- automatiser les conversions pour les patients qui le nécessitent et
+- transférer ces fichiers DICOM vers Velocity pour maintenir à un
+  endroit les données nécessaires à la clinique.
+
+À noter que par le passé lors de la conversion de CADPLAN vers
+Pinnacle, les archives CADPLAN n'ont pas été récupérées. Tous les
+plans de cette période (avant 2006-2007) sont perdus. Il n'était pas
+possible de transformer ces données sous format propriétaire vers le
+format standard DICOM. Ici on espère que pour Pinnacle rien ne sera
+perdu (dès 2006-2007 tous les plans devraient finalement être
+accessibles dans Velocity au moins pour les patients supposés vivants
+pendant cette année 2023).
+
+Les différentes étapes sont:
+- Établir la liste des patients encore supposés vivants
+- Pour chacun de ces patients convertir en DICOM tous les plans
+- Pour les patients officiellement décédés, seuls les fichiers tar
+  sont conservés
+- Après la conversion DICOM, on transférera les fichiers obtenus vers
+  VelocityGRID pour un import automatique
+
+* Les outils python pour convertir
+
+** Création de l'environnement pour la conversion
+
+#+BEGIN_SRC 
+conda create -n pymedphys python=3.10
+#+END_SRC
+
+suivi d'un 
+
+#+BEGIN_SRC 
+conda activate pymedphys
+#+END_SRC
+
+Note: python 3.10 contient la librairie *tarfile* qui sera importante
+pour décompacter les archives Pinnacle. En fait n'importe quel python
+>= 3.5 contient *tarfile*.
+
+** pymedphys
+https://github.com/pymedphys/pymedphys
+
+installé avec :
+
+#+BEGIN_SRC 
+$ pip install pymedphys[user]==0.39.3
+#+END_SRC
+
+** La commande pymedphys
+
+#+BEGIN_SRC 
+$ pymedphys experimental pinnacle export data/PatientNom_Prénom_PID_psqlNumber.tar -o out/
+#+END_SRC
+
+** poetry (optionnel)
+
+Il est nécessaire d'installer *poetry* pour pouvoir contourner un
+problème de nom de couleur pour les structures DICOM. Dans Pinnacle,
+il était permis pendant longtemps de choisir comme couleur
+"inverse_grey". Ce nom correspond à un dégradé de couleurs.  l'outil
+*poetry* permet d'installé la version GitHub de *pymedphys*.  C'est
+donc destiné aux développeurs qui veulent contribuer à pymedphys, et
+donc aussi aux utilisateurs qui veulent profiter de versions
+non-publiés (pas encore released).
+
+https://python-poetry.org/docs/
+
+installé avec (en étant dans l'environnement *pymedphys* bien sûr):
+
+#+BEGIN_SRC 
+$ pip install poetry
+#+END_SRC
+
+Pour installer le pymedphys lui-même, il faut être dans le répertoire
+GitHub de pymedphys et lancer les commandes suivantes:
+
+#+BEGIN_SRC 
+$ poetry install -E all
+$ poetry run pre-commit install
+$ poetry run pymedphys dev tests
+#+END_SRC
+
+La dernière commande permet de constater si la version actuelle est
+fonctionnelle. Pour l'HFR cela a permis de bénéficier de la prise en
+compte de ces structures colorées en "inverse_grey".
+
+** Script python pour préciser  
+
+Si le patient est : 
+
+   1. connu
+
+     a. vivant
+
+     b. décédé
+
+   2. inconnu
+   
+** Outil patientNameToPath
+
+J'ai installé l'outil HFR-Radio-oncologie avec les commandes suivantes
+en étant dans l'environnement conda *pymedphys*. Pour les autres
+centres, ceci n'est pas possible, mais pas non-plus nécessaire. Les
+infos nécessaires sont contenues dans le tar file de toutes
+manières. Il s'agit juste ici pour nous (HFR) de tenir notre
+vocabulaire commun adaptable rapidement.
+
+#+BEGIN_SRC 
+$ git clone http://172.27.52.40:3000/HFR/patientNameToPath.git
+$ pip install patientNameToPath/
+#+END_SRC
+
+* Routine python pour décompacter et convertir en DICOM un fichier TAR
+** Décompacter le tar dans une arborescence temporaire locale 
+
+** Détermination du patient
+
+** Création du répertoire cible
+
+** Conversion en DICOM
+
+** Destruction du répertoire temporaire
+
+* Les outils bash (très HFR, pas applicable ailleurs)
+
+* DONE Faire le script python qui lance la conversion pour un patient donné
+
+* DONE Faire le script python qui vérifie si le patient est connu comme décédé. Ceci afin d'éviter de le convertir pour rien.
+
+* DONE Utiliser tous les plans pour l'export (en principe seul un plan est exporté)
+
+* TODO Comment archiver tous ces patients
+1. Pour l'instant, on va les déposer dans un répertoire défini et
+   créer à l'intérieur de ce répertoire un répertoire par patient
+   appelé par le format habituel:
+
+2. Il n'y a pas de backups dans Velocity ce qui fait que les données peuvent y être effacées
+
