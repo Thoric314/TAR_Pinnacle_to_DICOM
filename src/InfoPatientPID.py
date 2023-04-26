@@ -162,7 +162,7 @@ def browse(inputdir, HFR):
             PID=filename.split('_')[-2]
             element=fetch_PatientInfo(PID)
             if not(element): # No such PID in Aria
-                move(filename,'./unknown/.')
+                move(filename,unknowndir)
                 continue
             else:
                 patientdcm = patientNameToPath(element.LastName,
