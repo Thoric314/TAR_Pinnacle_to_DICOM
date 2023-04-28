@@ -145,7 +145,7 @@ def makedir(inputdir, subdir):
 
 
 
-def browse(inputdir, HFR):
+def browse(inputdir, withAria):
     filenames = glob.glob(os.path.join(inputdir, "*.tar"))
 
     tempodir = makedir(inputdir, "tempo")
@@ -158,7 +158,7 @@ def browse(inputdir, HFR):
     for filename in filenames:
         path, patientname = extract_patient(filename, tempodir)
         
-        if HFR:
+        if withAria:
             PID=filename.split('_')[-2]
             element=fetch_PatientInfo(PID)
             if not(element): # No such PID in Aria
@@ -193,16 +193,27 @@ def browse(inputdir, HFR):
            
             move(filename,donedir)
     
-
+def usage():
+    sys.stderr.write("\nFatal error: one need a directory name\n")
+    sys.stderr.write("\nUsage:\n")
+    sys.stderr.write("ConvertFromPinnacle.py batchdirectory [withAria]\n\n")
+    sys.exit(1)
             
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.stderr.write("fatal error: one need a directory name\n")
-        sys.exit(1)
+    print(len(sys.argv))
+    if len(sys.argv) < 2 :
+        usage()
+    elif len(sys.argv) > 3 :
+        usage()
     else:
         inputdir=sys.argv[1]
-        HFR = True
-        browse(inputdir, HFR)
+
+        if len(sys.argv) == 3 :
+            withAria = (sys.argv[2] == 'withAria')
+        else:
+            withAria = False
+            
+        browse(inputdir, withAria)
         
         
         
