@@ -1,70 +1,24 @@
 # Introduction
 
 
-For the moment the Pinnacle system is still functional. However,
-there is no longer a contract between HFR and Philips to keep
-Pinnacle in working order. So we need to find a solution
-for all the patients who are still in the Pinnacle system.
+A lot of Pinnacle system are still functional. However, there will no
+longer have development under Pinnacle and a lot of radiation oncology
+centres need to go away from Pinnacle since the disinterest of
+Philips Medical System.
 
+This script here is dedicated to the conversion of Pinnacle TARFile to
+DICOM. 
+ 
+The tar files are created by Pinnacle containing one patient per tar
+file.
 
-Note: All these patients are regularly saved as a
-tar file (Tape ARchive). This is the standard archiving format under
-all Unix systems (including SunOs on which Pinnacle runs and also Linux
-
-also Linux which we know well at HFR).
-
-
-The idea is to convert these tar files that exist in a form
-of a tar file to a Pinnacle patient.
-
-
-The chance is that Australian physicists have worked to
-to design a python tool that does just this conversion work.
-
-
-This document explains the steps taken at the HFR to:
-
-
-- validate the conversion tool,
-
-- automate the conversions for patients who need it and
-
-- transfer these DICOM files to Velocity in order to maintain the data
-
-    necessary data to the clinic.
-
-
-Note that in the past when converting from CADPLAN to
-
-Pinnacle, the CADPLAN archives have not been recovered. All the
-
-plans from this period (before 2006-2007) are lost. It was not
-
-possible to transform these data in proprietary format to the
-
-standard DICOM format. Here we hope that for Pinnacle nothing will be
-
-lost (from 2006-2007 all plans should finally be available in Velocity at least for
-
-accessible in Velocity at least for patients who are supposed to be alive
-
-during this year 2023).
+The chance is that Australian physicists (*pymedphys* see below) have
+worked to to design a python tool that does just this.
 
 
 The different steps are:
 
-
-- Establish a list of patients still presumed alive
-
 - For each of these patients, convert all plans to DICOM
-
-- For officially deceased patients, only the tar
-
-    files are kept
-
-- After the DICOM conversion, the resulting files are transferred to
-
-    VelocityGRID for automatic import
 
 
 

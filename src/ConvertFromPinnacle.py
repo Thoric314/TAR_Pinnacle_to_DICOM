@@ -210,6 +210,7 @@ if __name__ == "__main__":
 
         if len(sys.argv) == 3 :
             withAria = (sys.argv[2] == 'withAria')
+            print("\nConverting in a directory consolidated with Aria...\n")
         else:
             withAria = False
             
