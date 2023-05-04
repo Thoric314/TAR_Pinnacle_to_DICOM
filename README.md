@@ -100,107 +100,13 @@ pymedphys and run the following commands:
 
 
 The last command allows you to see if the current version is
-
-functional. For the HFR, it allowed to benefit from the taking into account of
-
-structures colored in "inverse_grey".
-
-
-
-## Python script to specify
-
-
-If the patient is : 
-
-
-1. known
-
-    
-
-    a. alive
-
-    
-
-    b. deceased
-
-
-2. unknown
-
+functional. One of the benefits is to take advantage of a more recent
+update to avoid failures on a color problem (inverse_grey).
 
 
 ## PatientNameToPath tool
 
-
-I installed the HFR-Radio-oncology tool with the following commands
-
-while being in the conda **pymedphys** environment. For the other
-
-centers, this is not possible, but not necessary either. The
-
-necessary information is contained in the tar file anyway.
-
-file anyway. It is just a matter of us (HFR) keeping our common vocabulary
-
-quickly adaptable common vocabulary.
+Not necessary if you do not work with a process of reconciliation with Aria.
 
 
-    $ git clone http://172.27.52.40:3000/HFR/patientNameToPath.git
-
-    pip install patientNameToPath/
-
-
-
-# Python routine to unpack and convert a TAR file to DICOM
-
-
-
-## Decompress the tar in a local temporary tree
-
-
-
-## Determining the patient
-
-
-
-## Create target directory
-
-
-
-## Conversion to DICOM
-
-
-
-## Destroying the temporary directory
-
-
-
-# Bash tools (very HFR, not applicable elsewhere)
-
-
-
-# DONE Make the python script that launches the conversion for a given patient
-
-
-
-# DONE Do the python script that checks if the patient is known to be dead. This is to avoid converting it for nothing.
-
-
-
-# DONE Use all plans for export (normally only one plan is exported)
-
-
-
-# TODO How to archive all these patients
-
-
-1.  For the moment, we will put them in a defined directory and
-
-    create a directory for each patient within this directory
-
-    called by the usual format:
-
-
-2.  There are no backups in Velocity, so the data can be deleted
-
-
-
+## PatientNameToPath tool
