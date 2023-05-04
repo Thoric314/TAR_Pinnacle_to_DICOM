@@ -15,7 +15,7 @@ from datetime import timedelta, datetime, date, time
 
 import ariaDatabaseConnector as aria
 from pymedphys._experimental.pinnacle import PinnacleExport, PinnaclePlan
-from patientNameToPath import patientNameToPath
+
 
 
 def print_date(date):
@@ -159,6 +159,7 @@ def browse(inputdir, withAria):
         path, patientname = extract_patient(filename, tempodir)
         
         if withAria:
+            from patientNameToPath import patientNameToPath
             PID=filename.split('_')[-2]
             element=fetch_PatientInfo(PID)
             if not(element): # No such PID in Aria
